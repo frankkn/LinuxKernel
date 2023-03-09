@@ -10,7 +10,7 @@
 uname -a
 insmod hello.ko
 insmod hellop.ko howmany=5 whom="IIS"
-insmod hellop3.ko a=3 b=2 c=module_text
+insmod hellop3.ko a=3 b=2 c="module_text"
 lsmod | grep hello
 rmmod hellop
 rmmod hello
