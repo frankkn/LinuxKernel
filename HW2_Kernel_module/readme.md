@@ -29,4 +29,4 @@
 <img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW2_Kernel_module/1.jpg" width="600" height="300" alt="syslog"/><br/>
 
 * Dmesg:  
-<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW2_Kernel_module/2.jpg" width="600" height="300" alt="syslog"/><br/>
+<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW2_Kernel_module/2.jpg" width="600" height="500" alt="syslog"/><br/>
