@@ -24,6 +24,6 @@ Using [lxr.linux](https://lxr.linux.no/linux+v5.17/include/linux/cred.h) for sea
 Using [lxr.linux](https://lxr.linux.no/linux+v6.0.9/include/linux/sched.h) for searching task-related data structure.
 
 ps output:  
-<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW3_Process_credentials/ps/ps1.jpg" width="400" height="300" alt="syslog"/><br/>
+<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW3_Process_credentials/ps/ps1.jpg" width="800" height="600" alt="syslog"/><br/>
 syslog output:  
-<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW3_Process_credentials/syslog/syslog1.jpg" width="400" height="300" alt="syslog"/><br/>
+<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW3_Process_credentials/syslog/syslog1.jpg" width="800" height="600" alt="syslog"/><br/>

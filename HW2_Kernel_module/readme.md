@@ -7,15 +7,15 @@
 1.
 依序執行下列指令，進行module的載入與卸除。
 ```
-uname -a
-insmod hello.ko
-insmod hellop.ko howmany=5 whom="IIS"
-insmod hellop3.ko a=3 b=2 c="module_text"
-lsmod | grep hello
-rmmod hellop
-rmmod hello
-rmmod hellop3
-lsmod | grep hello
+# uname -a
+# insmod hello.ko
+# insmod hellop.ko howmany=5 whom="IIS"
+# insmod hellop3.ko a=3 b=2 c="module_text"
+# lsmod | grep hello
+# rmmod hellop
+# rmmod hello
+# rmmod hellop3
+# lsmod | grep hello
 ```
 2.   
 繳交項目:  
