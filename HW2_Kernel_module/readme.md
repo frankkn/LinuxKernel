@@ -19,6 +19,14 @@
 ```
 2.   
 繳交項目:  
-  1. 執行作業中，指令的畫面(截圖)  
-  2. 節錄指令`dmesg` or `cat /var/log/syslog`中所新增的內容(截圖或文字檔)  
-  3. hellop3.c 與 hellop3.ko  
+* 執行作業中，指令的畫面(截圖)  
+* 節錄指令`dmesg` or `cat /var/log/syslog`中所新增的內容(截圖或文字檔)  
+* hellop3.c 與 hellop3.ko  
+
+## Details:  
+
+* Commands:  
+<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW2_Kernel_module/1.jpg" width="600" height="400" alt="syslog"/><br/>
+
+* Dmesg:
+<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW2_Kernel_module/2.jpg" width="600" height="400" alt="syslog"/><br/>

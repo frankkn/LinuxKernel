@@ -6,7 +6,7 @@
 
 1. 繳交項目:
 * module輸出(/var/log/syslog)
-* $ps -ax -opid,uid,comm的輸出
+* $ ps -ax -opid,uid,comm的輸出
 * module source code
 
 2. 參考資料結構:
