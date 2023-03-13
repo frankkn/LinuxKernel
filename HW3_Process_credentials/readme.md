@@ -4,13 +4,13 @@
 
 ## Requirement: 
 
-1.   
+1. 
 繳交項目:  
-  1. module輸出(/var/log/syslog) 
+  1. module輸出(/var/log/syslog)
   2. $ps -ax -opid,uid,comm的輸出
   3. module source code
 
-2.  
+2. 
 參考資料結構:
   1. /include/linux/cred.h
   2. struct cred
