@@ -4,19 +4,17 @@
 
 ## Requirement: 
 
-1. 
-繳交項目:  
-  1. module輸出(/var/log/syslog)
-  2. $ps -ax -opid,uid,comm的輸出
-  3. module source code
+1. 繳交項目:
+* module輸出(/var/log/syslog)
+* $ps -ax -opid,uid,comm的輸出
+* module source code
 
-2. 
-參考資料結構:
-  1. /include/linux/cred.h
-  2. struct cred
-  3. extern const struct cred *get_task_cred(struct task_struct *);
-  4. /include/linux/sched.h
-  5. struct task_struct
+2. 參考資料結構:
+* /include/linux/cred.h
+* struct cred
+* extern const struct cred *get_task_cred(struct task_struct *);
+* /include/linux/sched.h
+* struct task_struct
 
 ## Details:
 
