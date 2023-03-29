@@ -35,6 +35,6 @@ Using [/include/linux/sched.h](https://lxr.linux.no/linux+v6.0.9/include/linux/s
 # make 
 # insmod process_pid_uid_comm.ko
 # lsmod | grep process_pid_uid_comm
-# cat var/log/stslog
+# cat var/log/syslog
 # id frank
 # ps -ax -opid,uid,comm
