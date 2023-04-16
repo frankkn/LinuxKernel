@@ -22,7 +22,27 @@
 
 ## Details:  
 
-* Commands:  
+* Screenshot:  
+<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW4_Mykpid_module/HW4/signal.jpg" width="600" height="300" alt="syslog"/><br/>
 
+* Commands:
+```
+# sudo su -
+# sudo mount -t vboxsf shared_folder /home/frank/Desktop/data
+# cd /home/frank/Desktop/data/HW4
+# ./a.out
+```
+```
+# sudo su -
+# cd /home/frank/Desktop/data/HW4
+# make
+# insmod mykpid.ko
+# lsmod | grep mykpid
+# ps auwx | grep a.out  // search pid of a.out
+# ls /proc/mykpid // confirmed folder: mykpid is created 
+# echo 2292 > /proc/mykpid
+# echo INT > /proc/mykpid
+# uname -a
+```
 
 
