@@ -25,7 +25,7 @@
 ## Details:  
 
 * Screenshot:  
-<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW4_Mykpid_module/HW4/signal.jpg" width="900" height="450" alt="syslog"/><br/>
+<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW4_Mykpid_module/HW4/signal.jpg" width="110" height="400" alt="syslog"/><br/>
 
 * Commands:
 ```
