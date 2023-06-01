@@ -1,49 +1,3 @@
-# HW5 - Myfs
-
-* 請根據以下程式(myfs.c)修改，達成以下功能
-1. 將檔案系統的跟目錄改為下列結構
-```
-/--+ input (dir)
-   |   |
-   |   +-- a (file)
-   |   +-- b (file)
-   |
-   + output (dir)
-       |
-       +-- add (file)
-       +-- sub (file)
-```       
-2. 可以透過 echo 數字 > /input/a 和 echo 數字 >/input/b 來設定a和b的值，數值大小0~255之間  
-3. 可以透過 cat /output/add取得a+b的值，透過cat /output/sub取得a-b的值。
-
-## Requirement: 
-1.   
-繳交項目:  
- * myfs.c  
- * myfs.ko  
- * 執行截圖  
-    * $ insmod myfs.ko
-    * $ lsmod
-      * 需看到myfs.ko
-    * $ mount -t myfs /dev/loop0 /mnt
-    * $ mount
-      * 需看到 /mnt的掛載資訊如 /dev/loop0 on /mnt type myfs (rw)
-    * 
-    ```
-        # echo 3 >/mnt/input/a
-        # cat /mnt/input/a
-        # echo 2 > /mnt/input/b
-        # cat /mnt/input/b
-        # cat /mnt/output/add
-        # cat /mnt/output/sub
-        # cat /mnt/output/add
-        # cat /mnt/output/sub
-    ```
-
-## Details:  
-
-* myfs.c
-```
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -51,25 +5,27 @@
 #include <linux/fs.h>           /* This is where libfs stuff is declared */
 #include <asm/atomic.h>
 #include <asm/uaccess.h>        /* copy_to_user */
- 
+#include <linux/namei.h>
+#include <linux/dcache.h>
  
 MODULE_LICENSE("GPL");
  
 #define MYFS_MAGIC 0x20210607
- 
- 
+static atomic_t a, b, add, sub;
+int a_value, b_value; 
+
+
 static struct inode *myfs_make_inode(struct super_block *sb, int mode)
 {
-        struct inode *ret = new_inode(sb);
- 
-        if (ret) {
+        struct inode *ret = new_inode(sb); 
+ 	if (ret) {
                 ret->i_mode = mode;
                 ret->i_uid.val = 0;
                 ret->i_gid.val = 0;
                 ret->i_blocks = 0;
-                ret->i_atime = current_kernel_time();
-                ret->i_mtime = current_kernel_time();
-                ret->i_ctime = current_kernel_time();
+                ret->i_atime = current_time(ret);
+                ret->i_mtime = current_time(ret);
+                ret->i_ctime = current_time(ret);
         }
         return ret;
 }
@@ -88,13 +44,18 @@ static ssize_t myfs_read_file(struct file *filp, char *buf,
         atomic_t *counter = (atomic_t *) filp->private_data;
         int v, len;
         char tmp[TMPSIZE];
+
+	if (counter == &sub)
+		atomic_set(counter, a_value - b_value);
+	if (counter == &add)
+		atomic_set(counter, a_value + b_value);
  
-        v = atomic_read(counter);
+        v = atomic_read(counter);  //read value in the file
         if (*offset > 0)
                 v -= 1;  /* the value returned when offset was zero */
         else
                 atomic_inc(counter);
-        len = snprintf(tmp, TMPSIZE, "%d\n", v);
+        len = snprintf(tmp, TMPSIZE, "%d\n", v);  //value put on memory
         if (*offset > len)
                 return 0;
         if (count > len - *offset)
@@ -117,11 +78,17 @@ static ssize_t myfs_write_file(struct file *filp, const char *buf,
  
         if (count >= TMPSIZE)
                 return -EINVAL;
-        memset(tmp, 0, TMPSIZE);
-        if (copy_from_user(tmp, buf, count))
+        memset(tmp, 0, TMPSIZE);   //empty memory
+        if (copy_from_user(tmp, buf, count))   //copy from user
                 return -EFAULT;
- 
+	//change str to decimal
         atomic_set(counter, simple_strtol(tmp, NULL, 10));
+
+	if (counter == &a)
+		a_value = atomic_read(counter);
+	if (counter == &b)
+		b_value = atomic_read(counter);
+ 
         return count;
 }
  
@@ -131,6 +98,7 @@ static struct file_operations myfs_file_ops = {
         .read   = myfs_read_file,
         .write  = myfs_write_file,
 };
+ 
  
 static struct dentry *myfs_create_file (struct super_block *sb,
                 struct dentry *dir, const char *name,
@@ -142,12 +110,12 @@ static struct dentry *myfs_create_file (struct super_block *sb,
  
         qname.name = name;
         qname.len = strlen (name);
-        qname.hash = full_name_hash(dir, name, qname.len);
+        qname.hash = full_name_hash(sb, name, qname.len);
  
         dentry = d_alloc(dir, &qname);
         if (! dentry)
                 goto out;
-        inode = myfs_make_inode(sb, S_IFREG | 0644);
+        inode = myfs_make_inode(sb, S_IFREG | 0777);
         if (! inode)
                 goto out_dput;
         inode->i_fop = &myfs_file_ops;
@@ -161,6 +129,8 @@ static struct dentry *myfs_create_file (struct super_block *sb,
   out:
         return 0;
 }
+ 
+ 
 static struct dentry *myfs_create_dir (struct super_block *sb,
                 struct dentry *parent, const char *name)
 {
@@ -175,7 +145,7 @@ static struct dentry *myfs_create_dir (struct super_block *sb,
         if (! dentry)
                 goto out;
  
-        inode = myfs_make_inode(sb, S_IFDIR | 0644);
+        inode = myfs_make_inode(sb, S_IFDIR | 0777);
         if (! inode)
                 goto out_dput;
         inode->i_op = &simple_dir_inode_operations;
@@ -189,23 +159,29 @@ static struct dentry *myfs_create_dir (struct super_block *sb,
   out:
         return 0;
 }
- 
-static atomic_t counter, subcounter;
- 
+
+//need to work 
 static void myfs_create_files (struct super_block *sb, struct dentry *root)
 {
-        struct dentry *subdir;
- 
-        atomic_set(&counter, 0);
-        myfs_create_file(sb, root, "counter", &counter);
- 
-        atomic_set(&subcounter, 0);
-        subdir = myfs_create_dir(sb, root, "subdir");
-        if (subdir)
-                myfs_create_file(sb, subdir, "subcounter", &subcounter);
-}
- 
- 
+        struct dentry *input_dir;
+        struct dentry *output_dir;
+
+        atomic_set(&a, 0);
+        atomic_set(&b, 0);
+        atomic_set(&add, 0);
+        atomic_set(&sub, 0);
+
+        input_dir= myfs_create_dir(sb, root, "input");
+        output_dir = myfs_create_dir(sb, root, "output");
+
+        if (input_dir)
+        {
+                myfs_create_file(sb, input_dir, "a", &a);
+                myfs_create_file(sb, input_dir, "b", &b);
+                myfs_create_file(sb, output_dir, "add", &add);
+                myfs_create_file(sb, output_dir, "sub", &sub);
+        }
+} 
  
 static struct super_operations myfs_s_ops = {
         .statfs         = simple_statfs,
@@ -217,12 +193,14 @@ static int myfs_fill_super (struct super_block *sb, void *data, int silent)
         struct inode *root;
         struct dentry *root_dentry;
  
-        sb->s_blocksize = PAGE_SIZE;
-        sb->s_blocksize_bits = PAGE_SHIFT;
+        // sb->s_blocksize = PAGE_SIZE;
+        // sb->s_blocksize_bits = PAGE_SHIFT;
+        sb->s_blocksize = 4096;
+        sb->s_blocksize_bits = 12;
         sb->s_magic = MYFS_MAGIC;
         sb->s_op = &myfs_s_ops;
  
-        root = myfs_make_inode (sb, S_IFDIR | 0755);
+        root = myfs_make_inode (sb, S_IFDIR | 0777);
         if (! root)
                 goto out;
         root->i_op = &simple_dir_inode_operations;
@@ -259,7 +237,7 @@ static int __init myfs_init(void)
 {
         return register_filesystem(&myfs_type);
 }
- 
+
 static void __exit myfs_exit(void)
 {
         unregister_filesystem(&myfs_type);
@@ -267,6 +245,3 @@ static void __exit myfs_exit(void)
  
 module_init(myfs_init);
 module_exit(myfs_exit);
-```
-
-
