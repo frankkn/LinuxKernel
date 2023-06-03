@@ -43,6 +43,5 @@
 ## Details:  
 
 * Screenshot:  
-<img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW5_Myfs/hw5/capture1.jpg" width="900" height="400" alt="syslog"/><br/>
 
 <img src="https://github.com/frankkn/Linux_Kernel/blob/master/HW5_Myfs/hw5/capture2.jpg" width="800" height="600" alt="syslog"/><br/>
